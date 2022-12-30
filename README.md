@@ -1,2 +1,2 @@
 # JavaDemoProjects
-Java Demos and Test Projects !Nothing serius
+Java Demos and Test Projects !Nothing serious
