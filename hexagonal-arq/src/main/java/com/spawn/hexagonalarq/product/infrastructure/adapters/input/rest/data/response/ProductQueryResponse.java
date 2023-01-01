@@ -3,6 +3,7 @@ package com.spawn.hexagonalarq.product.infrastructure.adapters.input.rest.data.r
 import lombok.*;
 
 @Data
+@AllArgsConstructor
 public class ProductQueryResponse {
 
     private Long id;
