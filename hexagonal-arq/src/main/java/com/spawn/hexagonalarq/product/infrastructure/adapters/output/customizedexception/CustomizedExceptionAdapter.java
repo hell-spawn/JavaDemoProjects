@@ -31,7 +31,6 @@ public class CustomizedExceptionAdapter extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ProductNotFound.class)
     public final ResponseEntity<Object> handleUserNotFoundException(ProductNotFound ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), Arrays.asList(request.getDescription(false)));
-
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 

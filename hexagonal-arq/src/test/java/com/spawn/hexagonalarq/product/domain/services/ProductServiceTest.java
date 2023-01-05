@@ -1,33 +1,54 @@
 package com.spawn.hexagonalarq.product.domain.services;
 
+import com.spawn.hexagonalarq.product.domain.exceptions.ProductNotFound;
 import com.spawn.hexagonalarq.product.domain.models.Product;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.eventpublisher.ProductEventPublisherAdapter;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.ProductPersistenceAdapter;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.entities.ProductEntity;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.mapper.ProductPersistenceMapper;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.repository.ProductRepository;
-import org.junit.Before;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import static org.mockito.BDDMockito.*;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest
 class ProductServiceTest {
-    @TestConfiguration
-    static class ProductServiceTestConfig {
+
+    @Configuration
+    static class ContextConfiguration {
+
+        @MockBean()
+        ProductRepository productRepository;
+
+        @MockBean
+        ProductPersistenceMapper productPersistenceMapper;
+        @MockBean
+        ApplicationEventPublisher applicationEventPublisher;
+
         @Bean
-        public ProductPersistenceAdapter productPersistenceAdapter(ProductRepository productRepository, ProductPersistenceMapper productPersistenceMapper) {
+        public ProductPersistenceAdapter productPersistenceAdapter() {
             return new ProductPersistenceAdapter(productRepository, productPersistenceMapper);
         }
 
@@ -40,85 +61,97 @@ class ProductServiceTest {
         public ProductService productService(ProductPersistenceAdapter productPersistenceAdapter, ProductEventPublisherAdapter productEventPublisherAdapter) {
             return new ProductService(productPersistenceAdapter, productEventPublisherAdapter);
         }
+
     }
 
-    @MockBean
-    private ProductRepository productRepository;
+    @Autowired
+    private ApplicationContext context;
 
     @Autowired
     private ProductService productService;
-    @Before
-    public void setUp() {
-        Product laptop = new Product(3L, "Laptop", "Macbook Pro");
-        ProductEntity laptopEntity = new ProductEntity();
-        laptopEntity.setId(3L);
-        laptopEntity.setName("Laptop");
-        laptopEntity.setDescription("Macbook Pro");
 
-        ProductEntity mobilePhone = new ProductEntity();
-        laptopEntity.setId(1L);
-        laptopEntity.setName("Laptop");
-        laptopEntity.setDescription("Macbook Pro");
+    @Autowired
+    ProductRepository productRepository;
 
-        Mockito.when(productRepository.findById(3L)).thenReturn(Optional.of(laptopEntity));
-        Mockito.when(productRepository.save(mobilePhone)).thenReturn(mobilePhone);
+    @Autowired
+    ProductPersistenceMapper productPersistenceMapper;
+
+    @Test
+    public void whenFindAllProducts_thenReturnListProducts(){
+        Product laptop = new Product(1L, "Laptop", "Macbook Pro");
+        Product  smartPhone = new Product(2L, "SmartPhone", "IPhone 12");
+        ProductEntity laptopEntity = new ProductEntity(1L, "Laptop", "Macbook Pro");
+        ProductEntity smartPhoneEntity = new ProductEntity(2L, "SmartPhone", "IPhone 12");
+
+        given(productRepository.findAll()).willReturn(Arrays.asList(laptopEntity, smartPhoneEntity));
+        given(productPersistenceMapper.map(Arrays.asList(laptopEntity, smartPhoneEntity))).willReturn(Arrays.asList(laptop, smartPhone));
+
+        List<Product> products = productService.findAll();
+
+        assertAll( "Find all products test",
+                () -> assertThat(products, hasSize(2)),
+                () -> assertThat(products, hasItem(laptop)),
+                () -> assertThat(products, hasItem(smartPhone))
+        );
+
+        Mockito.verify(productRepository, VerificationModeFactory.times(1)).findAll();
+        Mockito.reset(productRepository);
+        Mockito.verify(productPersistenceMapper, VerificationModeFactory.times(1)).map(Mockito.anyList());
+        Mockito.reset(productPersistenceMapper);
     }
 
 
     @Test
     public void whenValidProductId_thenProductShouldBeFound() {
         Long id = 3L;
+
+        Product laptop = new Product(id, "Laptop", "Macbook Pro");
+        ProductEntity laptopEntity = new ProductEntity();
+        laptopEntity.setId(3L);
+        laptopEntity.setName("Laptop");
+        laptopEntity.setDescription("Macbook Pro");
+
+        Mockito.when(productRepository.findById(id)).thenReturn(Optional.of(laptopEntity));
+        Mockito.when(productPersistenceMapper.toProduct(laptopEntity))
+                .thenReturn(new Product(id, "Laptop", "Macbook pro"));
+
         Product product = productService.findProductById(3L);
-
         assertThat(3L, is(product.getId()));
-        //verifyGetByProductIdIsCalledOnce();
-    }
 
-    /*
-
-    @Test
-    public void whenInValidProductId_thenProductShouldNotBeFound() {
-        Product product = productService.getProductById(5);
-
-        assertThat(product).isNull();
-        verifyGetByProductIdIsCalledOnce();
-    }
-
-    @Test
-    public void givenThreeProducts_whenGetAllProducts_thenThreeProductsReturned() {
-        Product mobilePhone = new Product(1, "Mobile Phone", "Samsung Galaxy S9");
-        Product book = new Product(2, "Book", "Kite Runner");
-        Product laptop = new Product(3, "Laptop", "Macbook Pro");
-
-        List<Product> allProducts = productService.getProducts();
-
-        assertThat(allProducts).hasSize(3).extracting(Product::getType).contains(mobilePhone.getType(), book.getType(), laptop.getType());
-        verifyGetProductsIsCalledOnce();
-    }
-
-    @Test
-    public void whenAddProduct_thenProductTypeIsMatched() {
-        Product electronics = new Product(4, "Electronics", "Bluetooth Speaker");
-
-        assertThat(productService.addProduct(electronics)).extracting(Product::getType).as(electronics.getType());
-    }
-
-    @Test
-    public void whenRemoveProductById_thenTwoProductReturned() {
-        Product laptop = new Product(3, "Laptop", "Macbook Pro");
-
-        assertThat(productService.removeProduct(3)).extracting(Product::getType).as(laptop.getType());
-    }
-
-    private void verifyGetByProductIdIsCalledOnce() {
-        Mockito.verify(productRepository, VerificationModeFactory.times(1)).getProductById(Mockito.anyInt());
+        Mockito.verify(productRepository, VerificationModeFactory.times(1)).findById(3L);
         Mockito.reset(productRepository);
+        Mockito.verify(productPersistenceMapper, VerificationModeFactory.times(1)).toProduct(Mockito.any());
+        Mockito.reset(productPersistenceMapper);
     }
 
-    private void verifyGetProductsIsCalledOnce() {
-        Mockito.verify(productRepository, VerificationModeFactory.times(1)).getProducts();
-        Mockito.reset(productRepository);
+
+    @Test
+    public void whenNotValidProductId_thenProductShouldNotBeFound() {
+        Long id = 5L;
+        Exception exception = assertThrows(ProductNotFound.class, () -> {
+            productService.findProductById(id);
+        });
     }
 
-     */
+
+    @Test
+    public void givenProduct_whenCreateProduct_thenReturnProductValid(){
+        Product newLaptop = new Product(null, "Laptop", "Macbook Pro");
+        Product laptop = new Product(2L, "Laptop", "Macbook Pro");
+        ProductEntity unsavedLaptopEntity =  new ProductEntity(null, "Laptop", "Macbook Pro");
+        ProductEntity savedLaptopEntity =  new ProductEntity(2L, "Laptop", "Macbook Pro");
+
+        Mockito.when(productPersistenceMapper.toProductEntity(newLaptop)).thenReturn(unsavedLaptopEntity);
+        Mockito.when(productRepository.save(unsavedLaptopEntity)).thenReturn(savedLaptopEntity);
+        Mockito.when(productPersistenceMapper.toProduct(savedLaptopEntity)).thenReturn(laptop);
+        Product product = productService.createProduct(newLaptop);
+
+        assertAll(
+                "Create product",
+                () -> assertThat(laptop.getId(), is(product.getId())),
+                () -> assertThat(newLaptop.getName(), is(product.getName())),
+                () -> assertThat(newLaptop.getDescription(), is(product.getDescription()))
+        );
+    }
+
 }

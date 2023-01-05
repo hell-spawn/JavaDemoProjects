@@ -8,6 +8,8 @@ import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -30,5 +32,14 @@ public class ProductPersistenceAdapter implements ProductOutPort {
             return Optional.of(product);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public List<Product> findAll() {
+       List<ProductEntity> productEntities =  productRepository.findAll();
+       if(productEntities.size() > 0){
+            return productPersistenceMapper.map(productEntities);
+       }
+       return new ArrayList<Product>();
     }
 }

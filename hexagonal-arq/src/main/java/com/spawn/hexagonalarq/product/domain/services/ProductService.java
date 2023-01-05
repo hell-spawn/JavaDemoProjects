@@ -9,6 +9,8 @@ import com.spawn.hexagonalarq.product.domain.exceptions.ProductNotFound;
 import com.spawn.hexagonalarq.product.domain.models.Product;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 public class ProductService implements CreateProductUseCase, GetProductUseCase {
 
@@ -26,4 +28,11 @@ public class ProductService implements CreateProductUseCase, GetProductUseCase {
     public Product findProductById(Long id) {
         return productOutPort.getProductById(id).orElseThrow(() -> new ProductNotFound("Product not found with id " + id));
     }
+
+    @Override
+    public List<Product> findAll() {
+        return productOutPort.findAll();
+    }
+
+
 }

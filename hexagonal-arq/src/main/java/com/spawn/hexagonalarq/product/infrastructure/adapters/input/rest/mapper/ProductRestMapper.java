@@ -6,6 +6,8 @@ import com.spawn.hexagonalarq.product.infrastructure.adapters.input.rest.data.re
 import com.spawn.hexagonalarq.product.infrastructure.adapters.input.rest.data.response.ProductQueryResponse;
 import org.mapstruct.Mapper;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface ProductRestMapper {
 
@@ -14,4 +16,6 @@ public interface ProductRestMapper {
     ProductCreateResponse toProductCreateResponse(Product product);
 
     ProductQueryResponse toProductQueryResponse(Product product);
+
+    List<ProductQueryResponse> map(List<Product> products);
 }

@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(ProductMapping.ROOT)
@@ -29,6 +30,12 @@ public class ProductRestAdapter {
         Product product = productRestMapper.toProduct(productCreateRequest);
         product = createProductUseCase.createProduct(product);
         return new ResponseEntity<>(productRestMapper.toProductCreateResponse(product), HttpStatus.OK);
+    }
+
+    @GetMapping(ProductMapping.PATH)
+    public ResponseEntity<List<ProductQueryResponse>> findAll(){
+        List<Product> products = getProductUseCase.findAll();
+        return new ResponseEntity<>( productRestMapper.map(products), HttpStatus.OK);
     }
 
     @GetMapping(ProductMapping.PATH + "/{id}")
