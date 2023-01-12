@@ -6,11 +6,13 @@ import com.spawn.hexagonalarq.product.infrastructure.adapters.output.eventpublis
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.ProductPersistenceAdapter;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.entities.ProductEntity;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.mapper.ProductPersistenceMapper;
+import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.mapper.ProductPersistenceMapperImpl;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.repository.ProductRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,19 +38,23 @@ import static org.mockito.BDDMockito.*;
 @SpringBootTest
 class ProductServiceTest {
 
-    @Configuration
+    @Configuration()
     static class ContextConfiguration {
 
         @MockBean()
         ProductRepository productRepository;
 
         @MockBean
-        ProductPersistenceMapper productPersistenceMapper;
-        @MockBean
         ApplicationEventPublisher applicationEventPublisher;
 
         @Bean
+        public ProductPersistenceMapper productPersistenceMapper(){
+            return new ProductPersistenceMapperImpl();
+        }
+
+        @Bean
         public ProductPersistenceAdapter productPersistenceAdapter() {
+            ProductPersistenceMapper productPersistenceMapper = Mappers.getMapper(ProductPersistenceMapper.class);
             return new ProductPersistenceAdapter(productRepository, productPersistenceMapper);
         }
 
@@ -84,7 +90,6 @@ class ProductServiceTest {
         ProductEntity smartPhoneEntity = new ProductEntity(2L, "SmartPhone", "IPhone 12");
 
         given(productRepository.findAll()).willReturn(Arrays.asList(laptopEntity, smartPhoneEntity));
-        given(productPersistenceMapper.map(Arrays.asList(laptopEntity, smartPhoneEntity))).willReturn(Arrays.asList(laptop, smartPhone));
 
         List<Product> products = productService.findAll();
 
@@ -96,8 +101,6 @@ class ProductServiceTest {
 
         Mockito.verify(productRepository, VerificationModeFactory.times(1)).findAll();
         Mockito.reset(productRepository);
-        Mockito.verify(productPersistenceMapper, VerificationModeFactory.times(1)).map(Mockito.anyList());
-        Mockito.reset(productPersistenceMapper);
     }
 
 
@@ -112,16 +115,12 @@ class ProductServiceTest {
         laptopEntity.setDescription("Macbook Pro");
 
         Mockito.when(productRepository.findById(id)).thenReturn(Optional.of(laptopEntity));
-        Mockito.when(productPersistenceMapper.toProduct(laptopEntity))
-                .thenReturn(new Product(id, "Laptop", "Macbook pro"));
 
         Product product = productService.findProductById(3L);
         assertThat(3L, is(product.getId()));
 
         Mockito.verify(productRepository, VerificationModeFactory.times(1)).findById(3L);
         Mockito.reset(productRepository);
-        Mockito.verify(productPersistenceMapper, VerificationModeFactory.times(1)).toProduct(Mockito.any());
-        Mockito.reset(productPersistenceMapper);
     }
 
 
@@ -141,9 +140,7 @@ class ProductServiceTest {
         ProductEntity unsavedLaptopEntity =  new ProductEntity(null, "Laptop", "Macbook Pro");
         ProductEntity savedLaptopEntity =  new ProductEntity(2L, "Laptop", "Macbook Pro");
 
-        Mockito.when(productPersistenceMapper.toProductEntity(newLaptop)).thenReturn(unsavedLaptopEntity);
         Mockito.when(productRepository.save(unsavedLaptopEntity)).thenReturn(savedLaptopEntity);
-        Mockito.when(productPersistenceMapper.toProduct(savedLaptopEntity)).thenReturn(laptop);
         Product product = productService.createProduct(newLaptop);
 
         assertAll(

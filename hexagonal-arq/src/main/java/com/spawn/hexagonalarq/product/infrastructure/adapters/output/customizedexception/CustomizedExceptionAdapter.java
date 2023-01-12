@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -22,14 +23,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class CustomizedExceptionAdapter extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public final ResponseEntity<ExceptionResponse> handleAllExceptions(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), Arrays.asList(request.getDescription(false)));
-
         return new ResponseEntity(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ProductNotFound.class)
-    public final ResponseEntity<Object> handleUserNotFoundException(ProductNotFound ex, WebRequest request) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public final ResponseEntity<ExceptionResponse> handleUserNotFoundException(ProductNotFound ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), Arrays.asList(request.getDescription(false)));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
     }
@@ -40,9 +42,7 @@ public class CustomizedExceptionAdapter extends ResponseEntityExceptionHandler {
         ex.getBindingResult().getAllErrors().stream().forEach(error -> {
             errors.add(error.getDefaultMessage());
         });
-
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), "Validation Failed", errors);
-
         return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
