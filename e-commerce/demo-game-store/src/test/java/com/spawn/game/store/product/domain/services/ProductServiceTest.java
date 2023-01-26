@@ -38,13 +38,14 @@ class ProductServiceTest {
         String test_UUID = "xxxxxx-xxxxxx-xxxxx";
         ObjectMapper objectMapper = new ObjectMapper();
 
-        Product game = new Product();
-        game.setId(null);
-        game.setName("Mario Kart 8 Deluxe");
-        game.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
-        game.setReference("REF-0001");
-        game.setDetails("{'Publishers':'Nintendo'}");
-        game.setPrice(new BigDecimal("49.99"));
+        Product game = new Product(
+            null,
+            "Mario Kart 8 Deluxe",
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "REF-0001",
+            "{'Publishers':'Nintendo'}",
+            new BigDecimal("49.99")
+        );
 
         ProductEntity unSavedProductEntity = new ProductEntity();
         unSavedProductEntity.setId(null);

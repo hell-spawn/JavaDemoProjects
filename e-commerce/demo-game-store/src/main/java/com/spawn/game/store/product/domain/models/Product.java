@@ -1,17 +1,20 @@
 package com.spawn.game.store.product.domain.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
 
     private String id;
-    private ProductType productType;
     private String name;
-    private BigDecimal price;
     private String reference;
     private String description;
     private String details;
+    private BigDecimal price;
 }
