@@ -22,7 +22,7 @@ public class ProductRestAdapter {
 
     private final ProductRestMapper productRestMapper;
 
-    @PostMapping(ProductRestMapping.PATH)
+    @PostMapping(ProductRestMapping.PATH + ProductRestMapping.PATH_CREATE_PRODUCT)
     public ResponseEntity<ProductCreateResponse> createProduct(@RequestBody @Valid ProductCreateRequest productCreateRequest){
         Product product = productRestMapper.toProduct(productCreateRequest);
         product = createProductUseCase.createProduct(product);

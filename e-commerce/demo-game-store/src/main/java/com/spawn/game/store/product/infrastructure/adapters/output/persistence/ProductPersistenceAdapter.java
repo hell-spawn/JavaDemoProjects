@@ -7,6 +7,8 @@ import com.spawn.game.store.product.infrastructure.adapters.output.persistence.r
 import com.spawn.game.store.product.infrastructure.adapters.output.persistence.repository.entities.ProductEntity;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class ProductPersistenceAdapter implements ProductOutPort {
 
@@ -19,5 +21,15 @@ public class ProductPersistenceAdapter implements ProductOutPort {
         ProductEntity productEntity = productPersistenceMapper.toProductEntity(product);
         productEntity = productRepository.save(productEntity);
         return productPersistenceMapper.toProduct(productEntity);
+    }
+
+    @Override
+    public Optional<Product> searchProductById(String productId) {
+        Optional<ProductEntity> productEntity = productRepository.findById(productId);
+        if(!productEntity.isPresent()){
+          return Optional.empty();
+        }
+        Product product = productPersistenceMapper.toProduct(productEntity.get());
+        return Optional.of(product);
     }
 }

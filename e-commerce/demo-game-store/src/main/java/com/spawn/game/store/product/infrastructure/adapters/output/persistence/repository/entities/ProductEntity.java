@@ -25,8 +25,8 @@ public class ProductEntity {
     private String id;
     //private ProductType productType;
     private String name;
-    private BigDecimal price;
     private String reference;
     private String description;
     private String details;
+    private BigDecimal price;
 }

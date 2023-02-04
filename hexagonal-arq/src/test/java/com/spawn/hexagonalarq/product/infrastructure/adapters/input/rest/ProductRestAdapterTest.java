@@ -9,21 +9,15 @@ import com.spawn.hexagonalarq.product.infrastructure.adapters.input.rest.data.re
 import com.spawn.hexagonalarq.product.infrastructure.adapters.input.rest.data.response.ProductCreateResponse;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.input.rest.data.response.ProductQueryResponse;
 import com.spawn.hexagonalarq.product.infrastructure.adapters.input.rest.mapper.ProductRestMapper;
-import com.spawn.hexagonalarq.product.infrastructure.adapters.input.rest.mapper.ProductRestMapperImpl;
-import com.spawn.hexagonalarq.product.infrastructure.adapters.output.persistence.entities.ProductEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.Mockito;
 
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 

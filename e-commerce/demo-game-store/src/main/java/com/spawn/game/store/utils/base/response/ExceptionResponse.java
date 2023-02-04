@@ -1,4 +1,4 @@
-package com.spawn.game.store.product.infrastructure.adapters.output.customizedexception.data.response;
+package com.spawn.game.store.utils.base.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

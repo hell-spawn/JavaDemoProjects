@@ -1,7 +1,7 @@
-package com.spawn.game.store.product.infrastructure.adapters.output.customizedexception;
+package com.spawn.game.store.utils.output.customizedexception;
 
 import com.spawn.game.store.product.domain.exceptions.ProductNotFound;
-import com.spawn.game.store.product.infrastructure.adapters.output.customizedexception.data.response.ExceptionResponse;
+import com.spawn.game.store.utils.base.response.ExceptionResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,7 @@ public class CustomizedExceptionAdapter extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ProductNotFound.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public final ResponseEntity<ExceptionResponse> handleUserNotFoundException(ProductNotFound ex, WebRequest request) {
+    public final ResponseEntity<ExceptionResponse> handleProductNotFoundException(ProductNotFound ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), ex.getMessage(), Arrays.asList(request.getDescription(false)));
         return new ResponseEntity(exceptionResponse, HttpStatus.NOT_FOUND);
     }
