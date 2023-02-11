@@ -5,7 +5,7 @@ import com.spawn.game.store.product.application.ports.input.QueryProductUseCase;
 import com.spawn.game.store.product.application.ports.output.ProductEventPublisher;
 import com.spawn.game.store.product.application.ports.output.ProductOutPort;
 import com.spawn.game.store.product.domain.events.ProductCreatedEvent;
-import com.spawn.game.store.product.domain.exceptions.ProductNotFound;
+import com.spawn.game.store.product.domain.exceptions.ProductNotFoundException;
 import com.spawn.game.store.product.domain.models.Product;
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +26,6 @@ public class ProductService  implements CreateProductUseCase, QueryProductUseCas
     @Override
     public Product searchProductById(String productId) {
         return productOutPort.searchProductById(productId)
-                .orElseThrow(() -> new ProductNotFound("Product not found with id " + productId));
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with id " + productId));
     }
 }

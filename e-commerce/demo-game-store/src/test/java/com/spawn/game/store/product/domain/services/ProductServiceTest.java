@@ -3,9 +3,11 @@ package com.spawn.game.store.product.domain.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spawn.game.store.product.domain.models.Product;
+import com.spawn.game.store.product.domain.models.ProductType;
 import com.spawn.game.store.product.domain.services.configuration.ProductServiceConfiguration;
 import com.spawn.game.store.product.infrastructure.adapters.output.persistence.repository.ProductRepository;
 import com.spawn.game.store.product.infrastructure.adapters.output.persistence.repository.entities.ProductEntity;
+import com.spawn.game.store.product.infrastructure.adapters.output.persistence.repository.entities.ProductTypeEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -41,7 +43,7 @@ class ProductServiceTest {
     @Test
     public void givenProductValid_whenCreateProduct_thenReturnProductValid() throws JsonProcessingException {
 
-        String test_UUID = "xxxxxx-xxxxxx-xxxxx";
+        String productId = UUID.randomUUID().toString();
         ObjectMapper objectMapper = new ObjectMapper();
 
         Product game = new Product(
@@ -50,29 +52,32 @@ class ProductServiceTest {
             "REF-0001",
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             "{'Publishers':'Nintendo'}",
-            new BigDecimal("49.99")
+            new BigDecimal("49.99"),
+            new ProductType(1L, "Games")
         );
 
         ProductEntity savedProductEntity = new ProductEntity();
-        savedProductEntity.setId(test_UUID);
+        savedProductEntity.setId(productId);
         savedProductEntity.setName("Mario Kart 8 Deluxe");
         savedProductEntity.setDescription("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
         savedProductEntity.setReference("REF-0001");
         savedProductEntity.setDetails("{'Publishers':'Nintendo'}");
         savedProductEntity.setPrice(new BigDecimal("49.99"));
+        savedProductEntity.setProductType(new ProductTypeEntity(1L, "Games"));
 
 
         given(productRepository.save(Mockito.any(ProductEntity.class))).willReturn(savedProductEntity);
         Product savedProduct = productService.createProduct(game);
 
         assertAll("Create Product Case",
-                () -> assertThat(savedProduct.getId(), is(test_UUID)),
+                () -> assertThat(savedProduct.getId(), is(productId)),
                 () -> assertThat(savedProduct.getDescription(), is(game.getDescription())),
                 () -> assertThat(savedProduct.getDetails(), is(game.getDetails())),
                 () -> assertThat(savedProduct.getName(), is(game.getName())),
                 () -> assertThat(savedProduct.getPrice(), is(game.getPrice())),
-                () -> assertThat(savedProduct.getReference(), is(game.getReference()))
-                //() -> assertThat(savedProduct.getProductType().getCode(), is(game.getProductType().getCode()))
+                () -> assertThat(savedProduct.getReference(), is(game.getReference())),
+                () -> assertThat(savedProduct.getProductType().getId(), is(game.getProductType().getId())),
+                () -> assertThat(savedProduct.getProductType().getDescription(), is(game.getProductType().getDescription()))
         );
 
         Mockito.verify(productRepository, VerificationModeFactory.times(1)).save(Mockito.any(ProductEntity.class));
@@ -89,7 +94,8 @@ class ProductServiceTest {
                 "REF-0001",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                 "{'Publishers':'Nintendo'}",
-                new BigDecimal("49.99")
+                new BigDecimal("49.99"),
+                new ProductTypeEntity(1L, "Game")
         );
 
         given(productRepository.findById(productId)).willReturn(Optional.of(productEntity));
@@ -102,7 +108,9 @@ class ProductServiceTest {
                 () -> assertThat(currentProduct.getReference(), is(productEntity.getReference())),
                 () -> assertThat(currentProduct.getDescription(), is(productEntity.getDescription())),
                 () -> assertThat(currentProduct.getDetails(), is(productEntity.getDetails())),
-                () -> assertThat(currentProduct.getPrice(), is(productEntity.getPrice()))
+                () -> assertThat(currentProduct.getPrice(), is(productEntity.getPrice())),
+                () -> assertThat(currentProduct.getProductType().getId(), is(productEntity.getProductType().getId())),
+                () -> assertThat(currentProduct.getProductType().getDescription(), is(productEntity.getProductType().getDescription()))
         );
 
         Mockito.verify(productRepository, VerificationModeFactory.times(1))

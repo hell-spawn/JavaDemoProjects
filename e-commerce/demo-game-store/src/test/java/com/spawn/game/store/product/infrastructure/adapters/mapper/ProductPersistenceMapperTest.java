@@ -1,9 +1,11 @@
 package com.spawn.game.store.product.infrastructure.adapters.mapper;
 
 import com.spawn.game.store.product.domain.models.Product;
+import com.spawn.game.store.product.domain.models.ProductType;
 import com.spawn.game.store.product.infrastructure.adapters.output.persistence.mappers.ProductPersistenceMapper;
 import com.spawn.game.store.product.infrastructure.adapters.output.persistence.mappers.ProductPersistenceMapperImpl;
 import com.spawn.game.store.product.infrastructure.adapters.output.persistence.repository.entities.ProductEntity;
+import com.spawn.game.store.product.infrastructure.adapters.output.persistence.repository.entities.ProductTypeEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
@@ -37,6 +40,7 @@ class ProductPersistenceMapperTest {
         gameEntity.setReference("REF-0001");
         gameEntity.setDetails("{'Publishers':'Nintendo'}");
         gameEntity.setPrice(new BigDecimal("49.99"));
+        gameEntity.setProductType(new ProductTypeEntity(1L, "Game"));
 
         Product game = productPersistenceMapper.toProduct(gameEntity);
 
@@ -46,7 +50,9 @@ class ProductPersistenceMapperTest {
                 () -> assertThat(game.getDescription(), is(gameEntity.getDescription())),
                 () -> assertThat(game.getReference(), is(gameEntity.getReference())),
                 () -> assertThat(game.getDetails(), is(gameEntity.getDetails())),
-                () -> assertThat(game.getPrice(), is(gameEntity.getPrice()))
+                () -> assertThat(game.getPrice(), is(gameEntity.getPrice())),
+                () -> assertThat(game.getProductType().getId(), is(gameEntity.getProductType().getId())),
+                () -> assertThat(game.getProductType().getDescription(), is(gameEntity.getProductType().getDescription()))
         );
 
     }
@@ -55,12 +61,13 @@ class ProductPersistenceMapperTest {
     public void givenProduct_whenMapperToProductEntity_thenReturnProductEntity(){
 
         Product game = new Product(
-                "asdfg-asdfg-asdfg-asdfg",
+                UUID.randomUUID().toString(),
                 "Mario Kart 8 Deluxe",
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                 "REF-0001",
                 "{'Publishers':'Nintendo'}",
-                new BigDecimal("49.99")
+                new BigDecimal("49.99"),
+                new ProductType(1L, "Games")
         );
 
         ProductEntity gameEntity = productPersistenceMapper.toProductEntity(game);
@@ -71,7 +78,9 @@ class ProductPersistenceMapperTest {
                 () -> assertThat(gameEntity.getDescription(), is(game.getDescription())),
                 () -> assertThat(gameEntity.getReference(), is(game.getReference())),
                 () -> assertThat(gameEntity.getDetails(), is(game.getDetails())),
-                () -> assertThat(gameEntity.getPrice(), is(game.getPrice()))
+                () -> assertThat(gameEntity.getPrice(), is(game.getPrice())),
+                () -> assertThat(gameEntity.getProductType().getId(), is(game.getProductType().getId())),
+                () -> assertThat(gameEntity.getProductType().getDescription(), is(game.getProductType().getDescription()))
         );
     }
 }

@@ -1,15 +1,13 @@
-package com.spawn.game.store.product.domain.models;
+package com.spawn.game.store.product.infrastructure.adapters.input.rest.data.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class ProductSearchResponse {
 
     private String id;
     private String name;
@@ -17,5 +15,5 @@ public class Product {
     private String description;
     private String details;
     private BigDecimal price;
-    private ProductType productType;
+
 }

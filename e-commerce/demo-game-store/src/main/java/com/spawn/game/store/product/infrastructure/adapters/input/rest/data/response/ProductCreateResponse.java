@@ -17,4 +17,6 @@ public class ProductCreateResponse {
     private String description;
     private String details;
     private BigDecimal price;
+
+    private ProductTypeResponse productType;
 }

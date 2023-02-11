@@ -3,6 +3,7 @@ package com.spawn.game.store.product.infrastructure.adapters.input.rest.mapper;
 import com.spawn.game.store.product.domain.models.Product;
 import com.spawn.game.store.product.infrastructure.adapters.input.rest.data.request.ProductCreateRequest;
 import com.spawn.game.store.product.infrastructure.adapters.input.rest.data.response.ProductCreateResponse;
+import com.spawn.game.store.product.infrastructure.adapters.input.rest.data.response.ProductSearchResponse;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface ProductRestMapper {
 
     Product toProduct(ProductCreateRequest productCreateRequest);
-
     ProductCreateResponse toProductCreateResponse(Product product);
+    ProductSearchResponse toProductQueryResponse(Product product);
 
 }

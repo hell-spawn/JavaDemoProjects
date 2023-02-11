@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Data
@@ -23,10 +20,13 @@ public class ProductEntity {
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID",strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
-    //private ProductType productType;
     private String name;
     private String reference;
     private String description;
     private String details;
     private BigDecimal price;
+    @OneToOne(cascade=CascadeType.ALL)//one-to-one
+    @JoinColumn(name="PRODUCT_TYPE_ID")
+    private ProductTypeEntity productType;
+
 }

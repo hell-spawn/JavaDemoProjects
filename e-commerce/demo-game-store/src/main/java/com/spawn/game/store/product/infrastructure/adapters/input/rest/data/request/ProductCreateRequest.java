@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -28,4 +29,8 @@ public class ProductCreateRequest {
 
     @NotNull(message = "Price cannot be empty")
     private BigDecimal price;
+    @Valid
+    @NotNull(message = "ProductType is required")
+    private ProductTypeRequest  productType;
+
 }

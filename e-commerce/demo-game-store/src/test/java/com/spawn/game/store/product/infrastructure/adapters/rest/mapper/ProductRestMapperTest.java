@@ -2,6 +2,7 @@ package com.spawn.game.store.product.infrastructure.adapters.rest.mapper;
 
 import com.spawn.game.store.product.domain.models.Product;
 import com.spawn.game.store.product.infrastructure.adapters.input.rest.data.request.ProductCreateRequest;
+import com.spawn.game.store.product.infrastructure.adapters.input.rest.data.request.ProductTypeRequest;
 import com.spawn.game.store.product.infrastructure.adapters.input.rest.mapper.ProductRestMapper;
 import com.spawn.game.store.product.infrastructure.adapters.input.rest.mapper.ProductRestMapperImpl;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,8 @@ class ProductRestMapperTest {
                 "Lorem ipsum dolor st amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
                 "REF-0001",
                 "{'Publishers':'Nintendo'}",
-                new BigDecimal("49.99")
+                new BigDecimal("49.99"),
+                new ProductTypeRequest(1L, "Game")
         );
 
         Product product = productRestMapper.toProduct(productCreateRequest);
