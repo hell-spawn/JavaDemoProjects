@@ -2,23 +2,25 @@
 
 ## CUSTOMERS
 
-CUSTOMER_ID
-FIRST_NAME
-MIDDLE_NAME
-LAST_NAME
-EMAIL_ADDRESS
-PHONE_NUMBER
-ADDRESS_MAIN
-CITY
-COUNTRY
-ZIP_CODE
+|   |FIELD          | VARCHAR(510) | DESCRIPTION                  |
+|---|---------------|--------------|------------------------------|
+|PK |ID             | VARCHAR(35)  | UID Identifier customers     |
+|PK |FIRST_NAME     | VARCHAR(35)  | Customer first name  not null|
+|PK |LAST_NAME      | VARCHAR(35)  | Customer last name not null  |
+|PK |EMAIL_ADDRESS  | VARCHAR(35)  | Customer email not null      |
+|PK |PHONE_NUMBER   | VARCHAR(35)  | Customer phone_number        |
+|PK |ADDRESS_MAIN   | VARCHAR(35)  | Customer Address not null    |
+|PK |CITY           | VARCHAR(35)  | Customer city                |
+|PK |COUNTRY        | VARCHAR(35)  | Customer country             |
+|PK |ZIP_CODE       | VARCHAR(35)  | Customer zip code not null   |
+
 
 ## PRODUCTS
 
 |   |FIELD          | VARCHAR(510) | DESCRIPTION                  |
 |---|---------------|--------------|------------------------------|
-|PK |ID             | VARCHAR(35)  | UID                          |
-|FK |PRODUCT_TYPE   | VARCHAR(35)  | Foreing key PRODUCTS_TYPES   |
+|PK |ID             | VARCHAR(35)  | UID Identifier products      |
+|FK |PRODUCT_TYPE   | INTEGER      | Foreing key PRODUCTS_TYPES   |
 |   |NAME           | VARCHAR(255) | Product Name                 |
 |   |PRICE          | DECIMAL      | Price Product                |
 |   |REFERENCE      | VARCHAR(255) | Code reference               |
@@ -27,8 +29,11 @@ ZIP_CODE
 
 ## PRODUCTS_TYPES
 
-PRODUCT_TYPE_ID
-PRODUCT_TYPE_DESCRIPTION
+|   |FIELD          | VARCHAR(510) | DESCRIPTION                  |
+|---|---------------|--------------|------------------------------|
+|PK |ID             | INTEGER      | ID Identifier product type   |
+|   |DESCRIPTION    | VARCHAR(35)  | Description product type     |
+
 
 ## PAYMENT_METHODS
 
