@@ -6,7 +6,6 @@ import java.util.Optional;
 
 public interface ProductOutPort {
 
-    public abstract Product saveProduct(Product product);
-
-    public abstract Optional<Product> searchProductById(String productId);
+    Product saveProduct(Product product);
+    Optional<Product> searchProductById(String productId);
 }

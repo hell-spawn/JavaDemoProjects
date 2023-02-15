@@ -2,6 +2,8 @@ package com.spawn.game.store.customer.domain.services.configuration;
 
 import com.spawn.game.store.customer.domain.models.Customer;
 import com.spawn.game.store.customer.domain.services.CustomerService;
+import com.spawn.game.store.customer.infrastructure.adapters.output.persistence.CustomerPersistenceAdapter;
+import com.spawn.game.store.customer.infrastructure.adapters.output.persistence.mappers.CustomerPersistenceMapper;
 import com.spawn.game.store.customer.infrastructure.adapters.output.persistence.repository.CustomerRepository;
 import com.spawn.game.store.product.domain.services.ProductService;
 import com.spawn.game.store.product.infrastructure.adapters.output.eventpublisher.ProductEventPublisherAdapter;
@@ -21,10 +23,15 @@ public class CustomerServiceConfiguration {
     CustomerRepository customerRepository;
 
 
+    @Bean
+    public CustomerPersistenceAdapter customerPersistenceAdapter(CustomerRepository customerRepository) {
+        CustomerPersistenceMapper customerPersistenceMapper = Mappers.getMapper(CustomerPersistenceMapper.class);
+        return new CustomerPersistenceAdapter(customerRepository, customerPersistenceMapper);
+    }
 
     @Bean
-    public CustomerService customerService() {
-        return new CustomerService();
+    public CustomerService customerService(CustomerPersistenceAdapter customerPersistenceAdapter) {
+        return new CustomerService(customerPersistenceAdapter);
 
     }
 

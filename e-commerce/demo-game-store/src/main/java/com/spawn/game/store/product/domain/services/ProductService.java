@@ -17,9 +17,9 @@ public class ProductService  implements CreateProductUseCase, QueryProductUseCas
     private final ProductEventPublisher productEventPublisher;
     @Override
     public Product createProduct(Product product) {
-        product = productOutPort.saveProduct(product);
+        Product productSaved = productOutPort.saveProduct(product);
         productEventPublisher.publishProductCreateEvent(new ProductCreatedEvent(product.getId()));
-        return product;
+        return productSaved;
     }
 
 

@@ -64,19 +64,19 @@ public class CustomerServiceTest {
         given(customerRepository.save(Mockito.any(CustomerEntity.class))).willReturn(savedCustomerEntity);
 
         //when
-        Customer savedCustomer = customerService.createCustomer(customer);
+        Customer customerSaved = customerService.createCustomer(customer);
 
         //then
         assertAll( "Create customer",
-                () -> assertThat(savedCustomer.getId(), is(customerId)),
-                () -> assertThat(savedCustomer.getFirstName(), is(customer.getFirstName())),
-                () -> assertThat(savedCustomer.getLastName(), is(customer.getLastName())),
-                () -> assertThat(savedCustomer.getEmail(), is(customer.getEmail())),
-                () -> assertThat(savedCustomer.getAddress(), is(customer.getAddress())),
-                () -> assertThat(savedCustomer.getCity(), is(customer.getCity())),
-                () -> assertThat(savedCustomer.getCountry(), is(customer.getCountry())),
-                () -> assertThat(savedCustomer.getZipCode(), is(customer.getZipCode())),
-                () -> assertThat(savedCustomer.getPhoneNumber(), is(customer.getPhoneNumber()))
+                () -> assertThat(customerSaved.getId(), is(customerId)),
+                () -> assertThat(customerSaved.getFirstName(), is(customer.getFirstName())),
+                () -> assertThat(customerSaved.getLastName(), is(customer.getLastName())),
+                () -> assertThat(customerSaved.getEmail(), is(customer.getEmail())),
+                () -> assertThat(customerSaved.getAddress(), is(customer.getAddress())),
+                () -> assertThat(customerSaved.getCity(), is(customer.getCity())),
+                () -> assertThat(customerSaved.getCountry(), is(customer.getCountry())),
+                () -> assertThat(customerSaved.getZipCode(), is(customer.getZipCode())),
+                () -> assertThat(customerSaved.getPhoneNumber(), is(customer.getPhoneNumber()))
         );
 
     }
